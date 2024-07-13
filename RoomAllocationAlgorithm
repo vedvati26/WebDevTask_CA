@@ -1,0 +1,18 @@
+def allocate_rooms(group_info, hostel_info):
+    allocations = []
+    for index, group in group_info.iterrows():
+        group_id = group['Group ID']
+        members = group['Members']
+        gender = group['Gender']
+        # Find suitable rooms
+        suitable_rooms = hostel_info[(hostel_info['Capacity'] >= members) & (hostel_info['Gender'] == gender)]
+        if not suitable_rooms.empty:
+            room = suitable_rooms.iloc[0]
+            allocations.append({
+                'Group ID': group_id,
+                'Hostel Name': room['Hostel Name'],
+                'Room Number': room['Room Number'],
+                'Members Allocated': members
+            })
+            hostel_info.at[room.name, 'Capacity'] -= members
+    return allocations
